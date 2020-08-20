@@ -13,6 +13,7 @@ const ADD = '+';
 const SUBTRACT = '-';
 const DIVIDE = '/';
 const MULTIPLY = 'X';
+const DECIMAL = 'DECIMAL';
 
 function Calculator() {
   const [currentValue, setCurrentValue] = useState(ZERO);
@@ -29,9 +30,11 @@ function Calculator() {
     if (currentValue === ZERO) {
       // Replace zero with clicked number
       setCurrentValue(numberClicked);
-    } else if (lastClicked === NUMBER) {
+
+    } else if (lastClicked === NUMBER || lastClicked === DECIMAL || currentValue === "-") {
       // Append number to the current value
       setCurrentValue(currentValue + numberClicked);
+
     } else if (lastClicked === OPERATOR) {
       // Store current value in memory and replace
       // current value with number clicked
@@ -57,8 +60,15 @@ function Calculator() {
 
     // When repeatedly clicking on operators
     if (lastClicked === OPERATOR) {
-      setActiveOperator(operatorClicked);
-      setHistory(history.slice(0, -1).concat(operatorClicked));
+
+      if (operatorClicked === SUBTRACT) {
+        setCurrentValue("-");
+        
+
+      } else {
+        setActiveOperator(operatorClicked);
+        setHistory(history.slice(0, -1).concat(operatorClicked));
+      }
 
       // Clicked operator after clicking on number
     } else if (lastClicked === NUMBER) {
@@ -74,16 +84,21 @@ function Calculator() {
       }
 
       setHistory(history.concat([currentValue, operatorClicked]));
+      setActiveOperator(operatorClicked);
     }
-
-    setActiveOperator(operatorClicked);
+    
     setLastClicked(OPERATOR);
   };
 
   // DECIMAL
   const handleDecimalClick = () => {
-    
+    if (lastClicked === DECIMAL || currentValue.includes(".")) return;
+
+    setCurrentValue(currentValue + ".");
+    setLastClicked(DECIMAL);
   }
+
+  
 
   // EQUALS
   const handleEqualsClick = () => {
@@ -142,7 +157,7 @@ function Calculator() {
 
       <Button value="" />
       <Button id="zero" value="0" onClick={handleNumberClick} />
-      <Button id="decimal" value="." />
+      <Button id="decimal" value="." onClick={handleDecimalClick} />
       <Button id="equals" value="=" onClick={handleEqualsClick} />
     </div>
   );
@@ -157,7 +172,8 @@ export default function App() {
 }
 
 function calculate(a, b, operation) {
-  console.log(a, b, a - b);
+  console.log(a, b, operation);
+  
   a = parseFloat(a);
   b = parseFloat(b);
 
