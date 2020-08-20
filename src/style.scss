@@ -1,0 +1,60 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: inherit;
+}
+
+html {
+  font-size: 62.5%; // 1rem = 10px
+  box-sizing: border-box;
+}
+
+body {
+  color: #fff;
+  background-color: #222;
+  font-size: 2rem;
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.App {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.Calculator {
+  display: grid;
+  grid-template-rows: auto 4rem repeat(5, 8rem);
+  grid-template-columns: repeat(4, 8rem);
+
+  & > input {
+    background-color: salmon;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+.display {
+  text-align: right;
+
+  &__secondary {
+    grid-column: 1 / -1;
+  
+    min-height: 50px;
+    color: #fff;
+    background-color: cornflowerblue;
+  }
+  
+  &__primary {
+    grid-column: 1 / -1;
+    
+    color: #fff;
+    background-color: crimson;
+  }
+
+}
+
+
