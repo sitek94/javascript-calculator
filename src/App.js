@@ -8,10 +8,11 @@ const ZERO = '0';
 const NUMBER = 'NUMBER';
 const OPERATOR = 'OPERATOR';
 const DELETE = 'DELETE';
+const EQUALS = 'EQUALS';
 const ADD = '+';
-const SUBTRACT = 'SUBTRACT';
-const DIVIDE = 'DIVIDE';
-const MULTIPLY = 'MULTIPLY';
+const SUBTRACT = '-';
+const DIVIDE = '/';
+const MULTIPLY = 'X';
 
 function Calculator() {
   const [currentValue, setCurrentValue] = useState(ZERO);
@@ -64,7 +65,7 @@ function Calculator() {
       // If there is something in memory calculate the result
       // Then clear memory
       if (memoryValue) {
-        setCurrentValue(calculate(currentValue, memoryValue, activeOperator));
+        setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
         setMemoryValue(null);
 
         // There is nothing in memory, update memory
@@ -79,15 +80,50 @@ function Calculator() {
     setLastClicked(OPERATOR);
   };
 
+  // DECIMAL
+  const handleDecimalClick = () => {
+    
+  }
+
+  // EQUALS
+  const handleEqualsClick = () => {
+    updateResult();
+    setHistory(history.concat([currentValue, "="]));
+    setLastClicked(EQUALS);
+    setActiveOperator(null);
+  }
+
+  // CLEAR
+  const handleClearClick = () => {
+    setCurrentValue(ZERO);
+    setMemoryValue(null);
+    setHistory([]);
+    setLastClicked(null);
+    setActiveOperator(null);
+  }
+
+  const updateResult = () => {
+    // If there is something in memory calculate the result
+      // Then clear memory
+      if (memoryValue) {
+        setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
+        setMemoryValue(null);
+
+        // There is nothing in memory, update memory
+      } else {
+        setMemoryValue(currentValue);
+      }
+  }
+
   return (
     <div className="Calculator">
       <div className="display display__secondary">{history.join(' ')}</div>
-      <div className="display display__primary">{currentValue}</div>
+      <div id="display" className="display display__primary">{currentValue}</div>
 
-      <Button id="one" value="1" />
-      <Button id="two" value="2" />
-      <Button id="three" value="3" />
-      <Button id="add" value="+" />
+      <Button id="clear" value="AC" onClick={handleClearClick} />
+      <Button id="" value="" />
+      <Button id="divide" value="/" onClick={handleOperatorClick} />
+      <Button id="multiply" value="X" onClick={handleOperatorClick} />
 
       <Button id="seven" value="7" onClick={handleNumberClick} />
       <Button id="eight" value="8" onClick={handleNumberClick} />
@@ -97,17 +133,17 @@ function Calculator() {
       <Button id="four" value="4" onClick={handleNumberClick} />
       <Button id="five" value="5" onClick={handleNumberClick} />
       <Button id="six" value="6" onClick={handleNumberClick} />
-      <Button id="subtract" value="-" />
+      <Button id="subtract" value="-" onClick={handleOperatorClick} />
 
-      <Button id="one" value="1" />
-      <Button id="two" value="2" />
-      <Button id="three" value="3" />
-      <Button id="add" value="+" />
+      <Button id="one" value="1" onClick={handleNumberClick} />
+      <Button id="two" value="2" onClick={handleNumberClick} />
+      <Button id="three" value="3" onClick={handleNumberClick} />
+      <Button id="add" value="+" onClick={handleOperatorClick} />
 
       <Button value="" />
-      <Button id="zero" value="0" />
-      <Button value="" />
-      <Button id="equals" value="=" />
+      <Button id="zero" value="0" onClick={handleNumberClick} />
+      <Button id="decimal" value="." />
+      <Button id="equals" value="=" onClick={handleEqualsClick} />
     </div>
   );
 }
@@ -121,19 +157,26 @@ export default function App() {
 }
 
 function calculate(a, b, operation) {
+  console.log(a, b, a - b);
   a = parseFloat(a);
   b = parseFloat(b);
 
+  let result;
   switch (operation) {
     case ADD:
-      return a + b;
+      result = a + b;
+      break;
     case SUBTRACT:
-      return a - b;
+      result = a - b;
+      break
     case MULTIPLY:
-      return a * b;
+      result = a * b;
+      break;
     case DIVIDE:
-      return a / b;
+      result = a / b;
+      break;
     default:
-      return;
+      break;
   }
+  return result.toString();
 }
