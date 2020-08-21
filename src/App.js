@@ -17,15 +17,17 @@ const DECIMAL = 'DECIMAL';
 
 
 function Calculator() {
+
   const [currentValue, setCurrentValue] = useState(ZERO);
   const [memoryValue, setMemoryValue] = useState(null);
+
   const [history, setHistory] = useState([]);
 
   const [activeOperator, setActiveOperator] = useState(null);
   const [lastClicked, setLastClicked] = useState(null);
 
   // DIGIT
-  const handleNumberClick = (e) => {
+  const handleDigitClick = (e) => {
     const numberClicked = e.target.value;
 
     // When current value is zero or is empty (after clearing negative operator)
@@ -49,6 +51,8 @@ function Calculator() {
 
   // DELETE
   const handleDeleteClick = () => {
+    // If current value is just one digit, set current value to zero
+    // otherwise remove last digit
     currentValue.length === 1
       ? setCurrentValue(ZERO)
       : setCurrentValue(currentValue.slice(0, -1));
@@ -60,7 +64,7 @@ function Calculator() {
   const handleOperatorClick = (e) => {
     const operatorClicked = e.target.value;
 
-    // Clicked the same operator twice
+    // Clicked the same operator twice, do nothing
     if (activeOperator === operatorClicked) return;
 
     // When repeatedly clicking on operators
@@ -68,34 +72,37 @@ function Calculator() {
 
       // Last time clicked on operator and then on subtract
       if (operatorClicked === SUBTRACT) {
+        // Set current to negative value
         setCurrentValue("-");
         
-
-      } else if (currentValue === "-") {
-        setCurrentValue("");
-        setActiveOperator(operatorClicked);
-        setHistory(history.slice(0, -1).concat(operatorClicked));
-        return;
       } else {
-
+        // Last time changed the value to negative and clicked operator
+        // again, so the user wants to change the operation
+        if (currentValue === "-") {
+          // Remove negative sign from current value
+          setCurrentValue("");
+        }
+        // Update operator clicked
         setActiveOperator(operatorClicked);
+        // Update history
         setHistory(history.slice(0, -1).concat(operatorClicked));
-      }
+      } 
 
-      // Clicked operator after clicking on number
+      // Last time clicked on a digit
     } else if (lastClicked === DIGIT) {
-      // If there is something in memory calculate the result
-      // Then clear memory
+
+      // There is something in memory
       if (memoryValue) {
-        
+        // Calculate the result and clear memory
         setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
         setMemoryValue(null);
 
-        // There is nothing in memory, update memory
       } else {
+        // There is nothing in memory so update memory
         setMemoryValue(currentValue);
       }
 
+      // Regardless of the memory append current value and operator clicked to history
       setHistory(history.concat([currentValue, operatorClicked]));
       setActiveOperator(operatorClicked);
     }
@@ -153,23 +160,23 @@ function Calculator() {
       <Button id="divide" value="/" onClick={handleOperatorClick} />
       <Button id="multiply" value="X" onClick={handleOperatorClick} />
 
-      <Button id="seven" value="7" onClick={handleNumberClick} />
-      <Button id="eight" value="8" onClick={handleNumberClick} />
-      <Button id="nine" value="9" onClick={handleNumberClick} />
+      <Button id="seven" value="7" onClick={handleDigitClick} />
+      <Button id="eight" value="8" onClick={handleDigitClick} />
+      <Button id="nine" value="9" onClick={handleDigitClick} />
       <Button value="DEL" onClick={handleDeleteClick} />
 
-      <Button id="four" value="4" onClick={handleNumberClick} />
-      <Button id="five" value="5" onClick={handleNumberClick} />
-      <Button id="six" value="6" onClick={handleNumberClick} />
+      <Button id="four" value="4" onClick={handleDigitClick} />
+      <Button id="five" value="5" onClick={handleDigitClick} />
+      <Button id="six" value="6" onClick={handleDigitClick} />
       <Button id="subtract" value="-" onClick={handleOperatorClick} />
 
-      <Button id="one" value="1" onClick={handleNumberClick} />
-      <Button id="two" value="2" onClick={handleNumberClick} />
-      <Button id="three" value="3" onClick={handleNumberClick} />
+      <Button id="one" value="1" onClick={handleDigitClick} />
+      <Button id="two" value="2" onClick={handleDigitClick} />
+      <Button id="three" value="3" onClick={handleDigitClick} />
       <Button id="add" value="+" onClick={handleOperatorClick} />
 
       <Button value="" />
-      <Button id="zero" value="0" onClick={handleNumberClick} />
+      <Button id="zero" value="0" onClick={handleDigitClick} />
       <Button id="decimal" value="." onClick={handleDecimalClick} />
       <Button id="equals" value="=" onClick={handleEqualsClick} />
     </div>
