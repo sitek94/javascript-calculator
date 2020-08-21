@@ -7,13 +7,12 @@ function Button(props) {
 const ZERO = '0';
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
-const DELETE = 'DELETE';
 const EQUALS = '=';
 const ADD = '+';
 const SUBTRACT = '-';
 const DIVIDE = '/';
 const MULTIPLY = 'X';
-const DECIMAL = 'DECIMAL';
+
 
 
 function Calculator() {
@@ -24,6 +23,8 @@ function Calculator() {
   const [history, setHistory] = useState([]);
 
   const [activeOperator, setActiveOperator] = useState(null);
+
+  // DIGIT, OPERATOR or null
   const [lastClicked, setLastClicked] = useState(null);
 
   // DIGIT
@@ -37,8 +38,8 @@ function Calculator() {
     if (currentValue === "0" || currentValue === "") {
       setCurrentValue(numberClicked);
     
-      // When previously clicked on digit, decimal or current value is negative sign 
-    } else if (lastClicked === DIGIT || lastClicked === DECIMAL || currentValue === "-") {
+      // When previously clicked on digit or current value is negative sign 
+    } else if (lastClicked === DIGIT || currentValue === "-") {
       // Append clicked number to the end
       setCurrentValue(currentValue + numberClicked);
 
@@ -57,10 +58,10 @@ function Calculator() {
     // If current value is just one digit, set current value to zero
     // otherwise remove last digit
     currentValue.length === 1
-      ? setCurrentValue(ZERO)
+      ? setCurrentValue("0")
       : setCurrentValue(currentValue.slice(0, -1));
 
-    setLastClicked(DELETE);
+    setLastClicked(null);
   };
 
   // OPERATOR
@@ -74,7 +75,7 @@ function Calculator() {
     if (lastClicked === OPERATOR) {
 
       // Last time clicked on operator and then on subtract
-      if (operatorClicked === SUBTRACT) {
+      if (operatorClicked === "-") {
         // Set current to negative value
         setCurrentValue("-");
         
@@ -94,18 +95,7 @@ function Calculator() {
       // Last time clicked on a digit
     } else if (lastClicked === DIGIT) {
 
-      // There is something in memory
-      if (memoryValue) {
-        // Calculate the result and clear memory
-        setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
-        setMemoryValue(null);
-
-      } else {
-        // There is nothing in memory so update memory
-        setMemoryValue(currentValue);
-      }
-
-      // Regardless of the memory append current value and operator clicked to history
+      updateResult();
       setHistory(history.concat([currentValue, operatorClicked]));
       setActiveOperator(operatorClicked);
     }
@@ -115,6 +105,8 @@ function Calculator() {
 
   // EQUALS
   const handleEqualsClick = () => {
+    if (activeOperator === "=");
+
     updateResult();
     setHistory(history.concat([currentValue, "="]));
     setLastClicked(OPERATOR);
@@ -131,16 +123,16 @@ function Calculator() {
   }
 
   const updateResult = () => {
-    // If there is something in memory calculate the result
-      // Then clear memory
-      if (memoryValue) {
-        setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
-        setMemoryValue(null);
+    // There is something in memory
+    if (memoryValue) {
+      // Calculate the result and clear memory
+      setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
+      setMemoryValue(null);
 
-        // There is nothing in memory, update memory
-      } else {
-        setMemoryValue(currentValue);
-      }
+    } else {
+      // There is nothing in memory so update memory
+      setMemoryValue(currentValue);
+    }
   }
 
   return (
