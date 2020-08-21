@@ -8,7 +8,6 @@ const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
 
 function Calculator() {
-
   // DIGIT, OPERATOR or null
   const [lastClicked, setLastClicked] = useState(null);
   const [history, setHistory] = useState([]);
@@ -19,7 +18,7 @@ function Calculator() {
 
   // DIGIT
   const handleDigitClick = (e) => {
-    if (isDisabled) return; 
+    if (isDisabled) return;
     if (currentValueReachedLimit()) return;
 
     const numberClicked = e.target.value;
@@ -151,6 +150,16 @@ function Calculator() {
     }
   };
 
+  // PLUS/MINUS
+  const handlePlusMinusClick = () => {
+    if (isDisabled) return;
+
+    // Append/remove minus sign
+    setCurrentValue(
+      currentValue[0] === '-' ? currentValue.slice(1) : '-' + currentValue
+    );
+  };
+
   // Updates result
   const updateResult = () => {
     // There is something in memory
@@ -164,6 +173,7 @@ function Calculator() {
     }
   };
 
+  // Digit limit
   const currentValueReachedLimit = () => {
     if (currentValue.length >= 23 && lastClicked === DIGIT) {
       setTimeout(() => {
@@ -171,11 +181,11 @@ function Calculator() {
         setIsDisabled(false);
       }, 1000);
 
-      setCurrentValue("LIMIT REACHED");
+      setCurrentValue('LIMIT REACHED');
       setIsDisabled(true);
       return true;
     }
-  }
+  };
 
   return (
     <Layout
@@ -183,7 +193,11 @@ function Calculator() {
       middle={
         <>
           <GridButton id="clear" value="AC" onClick={handleClear} />
-          <GridButton id="" value="" />
+          <GridButton
+            id="plus-minus"
+            value="+/-"
+            onClick={handlePlusMinusClick}
+          />
           <GridButton id="divide" value="/" onClick={handleOperatorClick} />
           <GridButton id="multiply" value="x" onClick={handleOperatorClick} />
 
@@ -207,13 +221,7 @@ function Calculator() {
           <GridButton id="decimal" value="." onClick={handleDigitClick} />
         </>
       }
-      bottom={
-        <LargeButton
-          id="equals"
-          value="="
-          onClick={handleEqualsClick}
-        />
-      }
+      bottom={<LargeButton id="equals" value="=" onClick={handleEqualsClick} />}
     />
   );
 }
