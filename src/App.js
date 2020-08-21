@@ -30,6 +30,9 @@ function Calculator() {
   const handleDigitClick = (e) => {
     const numberClicked = e.target.value;
 
+    // If clicked on decimal and there is already decimal point 
+    if (numberClicked === "." && currentValue.includes(".")) return;
+
     // When current value is zero or is empty (after clearing negative operator)
     if (currentValue === "0" || currentValue === "") {
       setCurrentValue(numberClicked);
@@ -110,16 +113,6 @@ function Calculator() {
     setLastClicked(OPERATOR);
   };
 
-  // DECIMAL
-  const handleDecimalClick = () => {
-    if (lastClicked === DECIMAL || currentValue.includes(".")) return;
-
-    setCurrentValue(currentValue + ".");
-    setLastClicked(DECIMAL);
-  }
-
-  
-
   // EQUALS
   const handleEqualsClick = () => {
     updateResult();
@@ -177,7 +170,7 @@ function Calculator() {
 
       <Button value="" />
       <Button id="zero" value="0" onClick={handleDigitClick} />
-      <Button id="decimal" value="." onClick={handleDecimalClick} />
+      <Button id="decimal" value="." onClick={handleDigitClick} />
       <Button id="equals" value="=" onClick={handleEqualsClick} />
     </div>
   );
