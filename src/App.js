@@ -48,9 +48,16 @@ function Calculator() {
 
       // When last time clicked on operator
     } else if (lastClicked === OPERATOR) {
+
+      // If clicked on decimal after clicking on operator
+      if (numberClicked === '.' && lastClicked === OPERATOR) {
+        setCurrentValue('0' + numberClicked);
+      } else {
+        setCurrentValue(numberClicked);
+      }
+
       // Store current value in memory and set current value to clicked digit
       setMemoryValue(currentValue);
-      setCurrentValue(numberClicked);
     }
 
     setLastClicked(DIGIT);
@@ -59,6 +66,7 @@ function Calculator() {
   // OPERATOR
   const handleOperatorClick = (e) => {
     if (isDisabled) return;
+    if (currentValue.slice(-1) === '.') return;
 
     const operatorClicked = e.target.value;
 
