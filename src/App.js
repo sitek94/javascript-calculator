@@ -6,15 +6,16 @@ import Layout from './Layout';
 
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
+const SQRT = '√';
 
 function Calculator() {
   // DIGIT, OPERATOR or null
+  const [currentValue, setCurrentValue] = useState('0');
+  const [memoryValue, setMemoryValue] = useState(null);
   const [lastClicked, setLastClicked] = useState(null);
+  const [activeOperator, setActiveOperator] = useState(null);
   const [history, setHistory] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
-  const [activeOperator, setActiveOperator] = useState(null);
-  const [memoryValue, setMemoryValue] = useState(null);
-  const [currentValue, setCurrentValue] = useState('0');
 
   // DIGIT
   const handleDigitClick = (e) => {
@@ -64,8 +65,40 @@ function Calculator() {
     // Clicked the same operator twice, do nothing
     if (lastClicked === OPERATOR && activeOperator === operatorClicked) return;
 
+    // Clicked on square root right after clicking on equals
+    if (operatorClicked === '√' && activeOperator === '=') {
+      setHistory(['√' + currentValue]);
+      setCurrentValue(Math.sqrt(currentValue).toString());
+      setActiveOperator('√');
+    }
+    // Clicked square root and nothing is in memory
+    else if (operatorClicked === '√' && memoryValue === null) {
+      // Calculate the value and append to history
+      setCurrentValue(Math.sqrt(currentValue).toString());
+      setHistory(history.concat('√' + currentValue));
+
+      setLastClicked(OPERATOR);
+      setActiveOperator('√');
+      return;
+
+      // Clicked on square root and something is in memory
+    } else if (operatorClicked === '√' && memoryValue) {
+      setCurrentValue(
+        (Math.sqrt(currentValue) + parseFloat(memoryValue)).toString()
+      );
+      setHistory(history.concat('√' + currentValue));
+      setMemoryValue(null);
+      setActiveOperator('√');
+
+      // Last clicked was square root
+    } else if (activeOperator === '√') {
+      // Append new operator to history
+      setHistory(history.concat(operatorClicked));
+      setActiveOperator(operatorClicked);
+      setMemoryValue(currentValue);
+    }
     // Right after clicking on equals clicked on operator
-    if (activeOperator === '=') {
+    else if (activeOperator === '=') {
       setMemoryValue(currentValue);
       setHistory([currentValue, operatorClicked]);
       setActiveOperator(operatorClicked);
@@ -106,15 +139,21 @@ function Calculator() {
     // If last clicked on equals or there is nothing to calculate
     if (activeOperator === '=' || activeOperator === null) return;
 
-    // Update current value and history
-    updateResult();
-    setHistory(
-      history.concat([
-        currentValue,
-        '=',
-        calculate(memoryValue, currentValue, activeOperator),
-      ])
-    );
+    // Last clicked on square root, already has the result
+    if (activeOperator === '√') {
+      setActiveOperator(history.concat(['=', currentValue]));
+
+      // Update current value and history
+    } else {
+      updateResult();
+      setHistory(
+        history.concat([
+          currentValue,
+          '=',
+          calculate(memoryValue, currentValue, activeOperator),
+        ])
+      );
+    }
 
     setLastClicked(OPERATOR);
     setActiveOperator('=');
@@ -198,27 +237,28 @@ function Calculator() {
             value="+/-"
             onClick={handlePlusMinusClick}
           />
-          <GridButton id="divide" value="/" onClick={handleOperatorClick} />
-          <GridButton id="multiply" value="x" onClick={handleOperatorClick} />
+          <GridButton value="DEL" onClick={handleDeleteClick} />
+          <GridButton id="sqrt" value="&radic;" onClick={handleOperatorClick} />
 
           <GridButton id="seven" value="7" onClick={handleDigitClick} />
           <GridButton id="eight" value="8" onClick={handleDigitClick} />
           <GridButton id="nine" value="9" onClick={handleDigitClick} />
-          <GridButton value="DEL" onClick={handleDeleteClick} />
+          <GridButton id="divide" value="/" onClick={handleOperatorClick} />
 
           <GridButton id="four" value="4" onClick={handleDigitClick} />
           <GridButton id="five" value="5" onClick={handleDigitClick} />
           <GridButton id="six" value="6" onClick={handleDigitClick} />
-          <GridButton id="subtract" value="-" onClick={handleOperatorClick} />
+          <GridButton id="multiply" value="x" onClick={handleOperatorClick} />
 
           <GridButton id="one" value="1" onClick={handleDigitClick} />
           <GridButton id="two" value="2" onClick={handleDigitClick} />
           <GridButton id="three" value="3" onClick={handleDigitClick} />
-          <GridButton id="add" value="+" onClick={handleOperatorClick} />
+          <GridButton id="subtract" value="-" onClick={handleOperatorClick} />
 
           <GridButton id="zero" value="0" onClick={handleDigitClick} />
           <GridButton id="double-zero" value="00" onClick={handleDigitClick} />
           <GridButton id="decimal" value="." onClick={handleDigitClick} />
+          <GridButton id="add" value="+" onClick={handleOperatorClick} />
         </>
       }
       bottom={<LargeButton id="equals" value="=" onClick={handleEqualsClick} />}
@@ -253,6 +293,9 @@ function calculate(a, b, operation) {
       break;
     case '/':
       result = a / b;
+      break;
+    case SQRT:
+      console.log(a, b);
       break;
     default:
       break;

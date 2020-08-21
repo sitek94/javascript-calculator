@@ -12,9 +12,11 @@ function ButtonBase({ className, ...props}) {
   );
 }
 
-export function GridButton(props) {
+// I'm taking id out and assign it to each button as class name
+// to have easy access to each individual button 
+export function GridButton({ id, ...props }) {
   return (
-    <ButtonBase className={classes.Grid} {...props} />
+    <ButtonBase id={id} className={[id, classes.Grid].join(" ")} {...props} />
   )
 }
 
