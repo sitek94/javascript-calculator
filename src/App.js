@@ -49,9 +49,7 @@ function Calculator() {
     }
 
     setLastClicked(DIGIT);
-  };
-
-  
+  };  
 
   // OPERATOR
   const handleOperatorClick = (e) => {
@@ -97,8 +95,10 @@ function Calculator() {
 
   // EQUALS
   const handleEqualsClick = () => {
+    // If last clicked on equals or there is nothing to calculate
     if (activeOperator === '=' || activeOperator === null) return;
 
+    // Update current value and history
     updateResult();
     setHistory(
       history.concat([
@@ -107,6 +107,7 @@ function Calculator() {
         calculate(memoryValue, currentValue, activeOperator),
       ])
     );
+
     setLastClicked(OPERATOR);
     setActiveOperator('=');
   };
