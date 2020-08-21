@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 import Display from './Display';
 import { Button, LargeButton } from './Button';
@@ -8,18 +8,30 @@ const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
 
 function Calculator() {
-  // In other words first and second operand
-  const [currentValue, setCurrentValue] = useState('0');
-  const [memoryValue, setMemoryValue] = useState(null);
-
-  const [activeOperator, setActiveOperator] = useState(null);
 
   // DIGIT, OPERATOR or null
   const [lastClicked, setLastClicked] = useState(null);
   const [history, setHistory] = useState([]);
+  const [isDisabled, setIsDisabled] = useState(false);
+  const [activeOperator, setActiveOperator] = useState(null);
+  const [memoryValue, setMemoryValue] = useState(null);
+  const [currentValue, setCurrentValue] = useState('0');
 
   // DIGIT
   const handleDigitClick = (e) => {
+    if (isDisabled) return;
+    if (currentValue.length === 24 && lastClicked === DIGIT) {
+      setTimeout(() => {
+        setCurrentValue(currentValue);
+        setIsDisabled(false);
+      }, 1000);
+
+      setCurrentValue("LIMIT REACHED");
+      setIsDisabled(true);
+      return;
+    }
+    
+
     const numberClicked = e.target.value;
 
     // If clicked on decimal and there is already decimal point
@@ -53,6 +65,8 @@ function Calculator() {
 
   // OPERATOR
   const handleOperatorClick = (e) => {
+    if (isDisabled) return;
+
     const operatorClicked = e.target.value;
 
     // Clicked the same operator twice, do nothing
@@ -95,6 +109,8 @@ function Calculator() {
 
   // EQUALS
   const handleEqualsClick = () => {
+    if (isDisabled) return;
+
     // If last clicked on equals or there is nothing to calculate
     if (activeOperator === '=' || activeOperator === null) return;
 
@@ -114,6 +130,8 @@ function Calculator() {
 
   // CLEAR
   const handleClear = () => {
+    if (isDisabled) return;
+
     setCurrentValue('0');
     setMemoryValue(null);
     setHistory([]);
@@ -123,6 +141,7 @@ function Calculator() {
 
   // DELETE
   const handleDeleteClick = () => {
+    if (isDisabled) return;
     if (lastClicked === OPERATOR) return;
 
     // Last clicked on equals
@@ -151,6 +170,10 @@ function Calculator() {
       setMemoryValue(currentValue);
     }
   };
+
+  const checkDigitLimit = () => {
+    
+  }
 
   return (
     <Layout
