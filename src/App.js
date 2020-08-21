@@ -4,42 +4,40 @@ function Button(props) {
   return <input type="button" className="button" {...props} />;
 }
 
-const ZERO = '0';
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
-const EQUALS = '=';
-const ADD = '+';
-const SUBTRACT = '-';
-const DIVIDE = '/';
-const MULTIPLY = 'X';
-
-
 
 function Calculator() {
-
-  const [currentValue, setCurrentValue] = useState(ZERO);
+  // In other words first and second operand
+  const [currentValue, setCurrentValue] = useState('0');
   const [memoryValue, setMemoryValue] = useState(null);
-
-  const [history, setHistory] = useState([]);
 
   const [activeOperator, setActiveOperator] = useState(null);
 
   // DIGIT, OPERATOR or null
   const [lastClicked, setLastClicked] = useState(null);
+  const [history, setHistory] = useState([]);
 
   // DIGIT
   const handleDigitClick = (e) => {
     const numberClicked = e.target.value;
 
-    // If clicked on decimal and there is already decimal point 
-    if (numberClicked === "." && currentValue.includes(".")) return;
+    // If clicked on decimal and there is already decimal point
+    if (numberClicked === '.' && currentValue.includes('.')) return;
 
-    // When current value is zero or is empty (after clearing negative operator)
-    if (currentValue === "0" || currentValue === "") {
+    // Clicked on digit right after clicking on equals
+    if (activeOperator === '=') {
       setCurrentValue(numberClicked);
-    
-      // When previously clicked on digit or current value is negative sign 
-    } else if (lastClicked === DIGIT || currentValue === "-") {
+      setMemoryValue(null);
+      setActiveOperator(null);
+      setHistory([]);
+
+      // When current value is zero or is empty (after clearing negative operator)
+    } else if (currentValue === '0' || currentValue === '') {
+      setCurrentValue(numberClicked);
+
+      // When previously clicked on digit or current value is negative sign
+    } else if (lastClicked === DIGIT || currentValue === '-') {
       // Append clicked number to the end
       setCurrentValue(currentValue + numberClicked);
 
@@ -53,97 +51,117 @@ function Calculator() {
     setLastClicked(DIGIT);
   };
 
-  // DELETE
-  const handleDeleteClick = () => {
-    // If current value is just one digit, set current value to zero
-    // otherwise remove last digit
-    currentValue.length === 1
-      ? setCurrentValue("0")
-      : setCurrentValue(currentValue.slice(0, -1));
-
-    setLastClicked(null);
-  };
+  
 
   // OPERATOR
   const handleOperatorClick = (e) => {
     const operatorClicked = e.target.value;
 
     // Clicked the same operator twice, do nothing
-    if (activeOperator === operatorClicked) return;
+    if (lastClicked === OPERATOR && activeOperator === operatorClicked) return;
 
-    // When repeatedly clicking on operators
-    if (lastClicked === OPERATOR) {
+    // Right after clicking on equals clicked on operator
+    if (activeOperator === '=') {
+      setMemoryValue(currentValue);
+      setHistory([currentValue, operatorClicked]);
+      setActiveOperator(operatorClicked);
 
+      // When repeatedly clicking on operators
+    } else if (lastClicked === OPERATOR) {
       // Last time clicked on operator and then on subtract
-      if (operatorClicked === "-") {
+      if (operatorClicked === '-') {
         // Set current to negative value
-        setCurrentValue("-");
-        
+        setCurrentValue('-');
       } else {
         // Last time changed the value to negative and clicked operator
         // again, so the user wants to change the operation
-        if (currentValue === "-") {
+        if (currentValue === '-') {
           // Remove negative sign from current value
-          setCurrentValue("");
+          setCurrentValue('');
         }
         // Update operator clicked
         setActiveOperator(operatorClicked);
         // Update history
         setHistory(history.slice(0, -1).concat(operatorClicked));
-      } 
+      }
 
       // Last time clicked on a digit
     } else if (lastClicked === DIGIT) {
-
       updateResult();
       setHistory(history.concat([currentValue, operatorClicked]));
       setActiveOperator(operatorClicked);
     }
-    
+
     setLastClicked(OPERATOR);
   };
 
   // EQUALS
   const handleEqualsClick = () => {
-    if (activeOperator === "=");
+    if (activeOperator === '=' || activeOperator === null) return;
 
     updateResult();
-    setHistory(history.concat([currentValue, "="]));
+    setHistory(
+      history.concat([
+        currentValue,
+        '=',
+        calculate(memoryValue, currentValue, activeOperator),
+      ])
+    );
     setLastClicked(OPERATOR);
-    setActiveOperator(EQUALS);
-  }
+    setActiveOperator('=');
+  };
 
   // CLEAR
   const handleClear = () => {
-    setCurrentValue(ZERO);
+    setCurrentValue('0');
     setMemoryValue(null);
     setHistory([]);
     setLastClicked(null);
     setActiveOperator(null);
-  }
+  };
 
+  // DELETE
+  const handleDeleteClick = () => {
+    if (lastClicked === OPERATOR) return;
+
+    // Last clicked on equals
+    if (activeOperator === '=') {
+      setMemoryValue(null);
+      setHistory([]);
+
+      // Current value is just one digit
+    } else if (currentValue.length === 1) {
+      setCurrentValue('0');
+    } else {
+      // Remove last digit
+      setCurrentValue(currentValue.slice(0, -1));
+    }
+  };
+
+  // Updates result
   const updateResult = () => {
     // There is something in memory
     if (memoryValue) {
       // Calculate the result and clear memory
       setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
       setMemoryValue(null);
-
     } else {
       // There is nothing in memory so update memory
       setMemoryValue(currentValue);
     }
-  }
+  };
 
   return (
     <div className="Calculator">
       <div className="display display__secondary">{history.join(' ')}</div>
-      <div id="display" className="display display__primary">{currentValue}</div>
+      <div id="display" className="display display__primary">
+        {currentValue}
+      </div>
 
       <Button id="clear" value="AC" onClick={handleClear} />
       <Button id="" value="" />
       <Button id="divide" value="/" onClick={handleOperatorClick} />
-      <Button id="multiply" value="X" onClick={handleOperatorClick} />
+      <Button id="multiply" value="x" onClick={handleOperatorClick} />
 
       <Button id="seven" value="7" onClick={handleDigitClick} />
       <Button id="eight" value="8" onClick={handleDigitClick} />
@@ -178,22 +196,22 @@ export default function App() {
 
 function calculate(a, b, operation) {
   console.log(a, b, operation);
-  
+
   a = parseFloat(a);
   b = parseFloat(b);
 
   let result;
   switch (operation) {
-    case ADD:
+    case '+':
       result = a + b;
       break;
-    case SUBTRACT:
+    case '-':
       result = a - b;
-      break
-    case MULTIPLY:
+      break;
+    case 'x':
       result = a * b;
       break;
-    case DIVIDE:
+    case '/':
       result = a / b;
       break;
     default:
