@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 
 import Display from './Display';
-import { Button, LargeButton } from './Button';
+import { GridButton, LargeButton } from './Button';
 import Layout from './Layout';
 
 const DIGIT = 'DIGIT';
@@ -23,6 +23,9 @@ function Calculator() {
     if (currentValueReachedLimit()) return;
 
     const numberClicked = e.target.value;
+
+    // Prevent multiple zeros
+    if (numberClicked === '00' && currentValue === '0') return;
 
     // If clicked on decimal and there is already decimal point
     if (numberClicked === '.' && currentValue.includes('.')) return;
@@ -162,7 +165,7 @@ function Calculator() {
   };
 
   const currentValueReachedLimit = () => {
-    if (currentValue.length === 24 && lastClicked === DIGIT) {
+    if (currentValue.length >= 23 && lastClicked === DIGIT) {
       setTimeout(() => {
         setCurrentValue(currentValue);
         setIsDisabled(false);
@@ -179,29 +182,29 @@ function Calculator() {
       top={<Display topValue={history.join(' ')} bottomValue={currentValue} />}
       middle={
         <>
-          <Button id="clear" value="AC" onClick={handleClear} />
-          <Button id="" value="" />
-          <Button id="divide" value="/" onClick={handleOperatorClick} />
-          <Button id="multiply" value="x" onClick={handleOperatorClick} />
+          <GridButton id="clear" value="AC" onClick={handleClear} />
+          <GridButton id="" value="" />
+          <GridButton id="divide" value="/" onClick={handleOperatorClick} />
+          <GridButton id="multiply" value="x" onClick={handleOperatorClick} />
 
-          <Button id="seven" value="7" onClick={handleDigitClick} />
-          <Button id="eight" value="8" onClick={handleDigitClick} />
-          <Button id="nine" value="9" onClick={handleDigitClick} />
-          <Button value="DEL" onClick={handleDeleteClick} />
+          <GridButton id="seven" value="7" onClick={handleDigitClick} />
+          <GridButton id="eight" value="8" onClick={handleDigitClick} />
+          <GridButton id="nine" value="9" onClick={handleDigitClick} />
+          <GridButton value="DEL" onClick={handleDeleteClick} />
 
-          <Button id="four" value="4" onClick={handleDigitClick} />
-          <Button id="five" value="5" onClick={handleDigitClick} />
-          <Button id="six" value="6" onClick={handleDigitClick} />
-          <Button id="subtract" value="-" onClick={handleOperatorClick} />
+          <GridButton id="four" value="4" onClick={handleDigitClick} />
+          <GridButton id="five" value="5" onClick={handleDigitClick} />
+          <GridButton id="six" value="6" onClick={handleDigitClick} />
+          <GridButton id="subtract" value="-" onClick={handleOperatorClick} />
 
-          <Button id="one" value="1" onClick={handleDigitClick} />
-          <Button id="two" value="2" onClick={handleDigitClick} />
-          <Button id="three" value="3" onClick={handleDigitClick} />
-          <Button id="add" value="+" onClick={handleOperatorClick} />
+          <GridButton id="one" value="1" onClick={handleDigitClick} />
+          <GridButton id="two" value="2" onClick={handleDigitClick} />
+          <GridButton id="three" value="3" onClick={handleDigitClick} />
+          <GridButton id="add" value="+" onClick={handleOperatorClick} />
 
-          <Button value="" />
-          <Button id="zero" value="0" onClick={handleDigitClick} />
-          <Button id="decimal" value="." onClick={handleDigitClick} />
+          <GridButton id="zero" value="0" onClick={handleDigitClick} />
+          <GridButton id="double-zero" value="00" onClick={handleDigitClick} />
+          <GridButton id="decimal" value="." onClick={handleDigitClick} />
         </>
       }
       bottom={

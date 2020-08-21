@@ -2,18 +2,24 @@ import React from 'react';
 import classes from './Button.module.scss';
 
 
-export function Button({ className, ...props}) {
+function ButtonBase({ className, ...props}) {
   return (
     <input
       type="button"
-      className={[classes.Button, className].join(' ')}
+      className={[classes.Base, className].join(' ')}
       {...props}
     />
   );
 }
 
+export function GridButton(props) {
+  return (
+    <ButtonBase className={classes.Grid} {...props} />
+  )
+}
+
 export function LargeButton(props) {
   return (
-    <Button className={classes.LargeButton} {...props} />
+    <ButtonBase className={classes.Large} {...props} />
   )
 }

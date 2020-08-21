@@ -1,4 +1,4 @@
-.Button {
+.Base {
   border: 0;
   outline: none;
   cursor: pointer;
@@ -7,7 +7,13 @@
   font-size: 2rem;
 }
 
-.LargeButton {
+.Grid {
+  &:hover {
+    background-color: #ccc;
+  }
+}
+
+.Large {
   width: 100%;
   height: 100%;
 
