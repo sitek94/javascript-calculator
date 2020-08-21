@@ -1,0 +1,16 @@
+.Display {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 2rem;
+
+  text-align: right;
+
+  .top {
+  }
+
+  .bottom {
+    font-size: 6rem;
+    font-weight: 200;
+  }
+}

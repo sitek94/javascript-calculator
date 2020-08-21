@@ -11,7 +11,7 @@ html {
 
 body {
   color: #fff;
-  background-color: #222;
+  background-color: #666;
   font-size: 2rem;
   font-family: 'Roboto', sans-serif;
 }
@@ -23,73 +23,15 @@ body {
   align-items: center;
 }
 
-.Calculator {
-  position: relative;
 
-  display: flex;
-  justify-content: center;
-}
 
-.back-panel {
-  width: 300px;
-  height: calc(135px + 370px + 64px);
-  
-  display: grid;
-  grid-template-rows: 135px 370px 64px;
 
-  color: #333;
-  background-color: #fff;
-}
 
-.front-panel {
-  top: 135px;
-  position: absolute;
-  z-index: 10;
-  padding: 20px;
-  width: 340px;
-  height: 370px;
- 
-  background-color: salmon;
-  opacity: .5;
-}
 
-.large-button {
-  grid-row: 3 / 4;
-  
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  
-  color: #fff;
-  background-color: red;
-  font-size: 32px;
-}
 
-.grid {  
-  display: grid;
-  grid-template-rows: repeat(5, 1fr);
-  grid-template-columns: repeat(4, 1fr);
-}
 
-.display {
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 2rem;
 
-  text-align: right;
-  
 
-  &__top {
-    
-  }
-
-  &__bottom {
-    font-size: 6rem;
-    font-weight: 200;
-    
-  }
-}
 
 
 

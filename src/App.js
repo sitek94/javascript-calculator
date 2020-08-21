@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 
-function Button(props) {
-  return <input type="button" className="button" {...props} />;
-}
+import Display from './Display';
+import { Button, LargeButton } from './Button';
+import Layout from './Layout';
 
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
@@ -153,43 +153,43 @@ function Calculator() {
   };
 
   return (
-    <div className="Calculator">
-      <div className="back-panel">
-        <div className="display">
-          <div className="display__top">{history.join(' ')}</div>
-          <div id="display" className="display__bottom">
-            {currentValue}
-          </div>
-        </div>
-      </div>
+    <Layout
+      top={<Display topValue={history.join(' ')} bottomValue={currentValue} />}
+      middle={
+        <>
+          <Button id="clear" value="AC" onClick={handleClear} />
+          <Button id="" value="" />
+          <Button id="divide" value="/" onClick={handleOperatorClick} />
+          <Button id="multiply" value="x" onClick={handleOperatorClick} />
 
-      <div className="front-panel grid">
-        <Button id="clear" value="AC" onClick={handleClear} />
-        <Button id="" value="" />
-        <Button id="divide" value="/" onClick={handleOperatorClick} />
-        <Button id="multiply" value="x" onClick={handleOperatorClick} />
+          <Button id="seven" value="7" onClick={handleDigitClick} />
+          <Button id="eight" value="8" onClick={handleDigitClick} />
+          <Button id="nine" value="9" onClick={handleDigitClick} />
+          <Button value="DEL" onClick={handleDeleteClick} />
 
-        <Button id="seven" value="7" onClick={handleDigitClick} />
-        <Button id="eight" value="8" onClick={handleDigitClick} />
-        <Button id="nine" value="9" onClick={handleDigitClick} />
-        <Button value="DEL" onClick={handleDeleteClick} />
+          <Button id="four" value="4" onClick={handleDigitClick} />
+          <Button id="five" value="5" onClick={handleDigitClick} />
+          <Button id="six" value="6" onClick={handleDigitClick} />
+          <Button id="subtract" value="-" onClick={handleOperatorClick} />
 
-        <Button id="four" value="4" onClick={handleDigitClick} />
-        <Button id="five" value="5" onClick={handleDigitClick} />
-        <Button id="six" value="6" onClick={handleDigitClick} />
-        <Button id="subtract" value="-" onClick={handleOperatorClick} />
+          <Button id="one" value="1" onClick={handleDigitClick} />
+          <Button id="two" value="2" onClick={handleDigitClick} />
+          <Button id="three" value="3" onClick={handleDigitClick} />
+          <Button id="add" value="+" onClick={handleOperatorClick} />
 
-        <Button id="one" value="1" onClick={handleDigitClick} />
-        <Button id="two" value="2" onClick={handleDigitClick} />
-        <Button id="three" value="3" onClick={handleDigitClick} />
-        <Button id="add" value="+" onClick={handleOperatorClick} />
-
-        <Button value="" />
-        <Button id="zero" value="0" onClick={handleDigitClick} />
-        <Button id="decimal" value="." onClick={handleDigitClick} />
-        <Button id="equals" value="=" onClick={handleEqualsClick} />
-      </div>
-    </div>
+          <Button value="" />
+          <Button id="zero" value="0" onClick={handleDigitClick} />
+          <Button id="decimal" value="." onClick={handleDigitClick} />
+        </>
+      }
+      bottom={
+        <LargeButton
+          id="equals"
+          value="="
+          onClick={handleEqualsClick}
+        />
+      }
+    />
   );
 }
 
