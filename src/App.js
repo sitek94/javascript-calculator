@@ -30,7 +30,10 @@ function Calculator() {
     if (currentValue === ZERO) {
       // Replace zero with clicked number
       setCurrentValue(numberClicked);
-
+    }
+    else if (currentValue === "") {
+      setCurrentValue(numberClicked);
+    
     } else if (lastClicked === NUMBER || lastClicked === DECIMAL || currentValue === "-") {
       // Append number to the current value
       setCurrentValue(currentValue + numberClicked);
@@ -58,14 +61,24 @@ function Calculator() {
   const handleOperatorClick = (e) => {
     const operatorClicked = e.target.value;
 
+    // Clicked the same operator twice
+    if (activeOperator === operatorClicked) return;
+
     // When repeatedly clicking on operators
     if (lastClicked === OPERATOR) {
 
+      // Last time clicked on operator and then on subtract
       if (operatorClicked === SUBTRACT) {
         setCurrentValue("-");
         
 
+      } else if (currentValue === "-") {
+        setCurrentValue("");
+        setActiveOperator(operatorClicked);
+        setHistory(history.slice(0, -1).concat(operatorClicked));
+        return;
       } else {
+
         setActiveOperator(operatorClicked);
         setHistory(history.slice(0, -1).concat(operatorClicked));
       }
@@ -75,6 +88,7 @@ function Calculator() {
       // If there is something in memory calculate the result
       // Then clear memory
       if (memoryValue) {
+        
         setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
         setMemoryValue(null);
 
@@ -104,8 +118,8 @@ function Calculator() {
   const handleEqualsClick = () => {
     updateResult();
     setHistory(history.concat([currentValue, "="]));
-    setLastClicked(EQUALS);
-    setActiveOperator(null);
+    setLastClicked(OPERATOR);
+    setActiveOperator(EQUALS);
   }
 
   // CLEAR
