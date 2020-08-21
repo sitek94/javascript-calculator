@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 
 import Display from './Display';
 import { Button, LargeButton } from './Button';
@@ -19,18 +19,8 @@ function Calculator() {
 
   // DIGIT
   const handleDigitClick = (e) => {
-    if (isDisabled) return;
-    if (currentValue.length === 24 && lastClicked === DIGIT) {
-      setTimeout(() => {
-        setCurrentValue(currentValue);
-        setIsDisabled(false);
-      }, 1000);
-
-      setCurrentValue("LIMIT REACHED");
-      setIsDisabled(true);
-      return;
-    }
-    
+    if (isDisabled) return; 
+    if (currentValueReachedLimit()) return;
 
     const numberClicked = e.target.value;
 
@@ -171,8 +161,17 @@ function Calculator() {
     }
   };
 
-  const checkDigitLimit = () => {
-    
+  const currentValueReachedLimit = () => {
+    if (currentValue.length === 24 && lastClicked === DIGIT) {
+      setTimeout(() => {
+        setCurrentValue(currentValue);
+        setIsDisabled(false);
+      }, 1000);
+
+      setCurrentValue("LIMIT REACHED");
+      setIsDisabled(true);
+      return true;
+    }
   }
 
   return (
