@@ -23,6 +23,10 @@ body {
   align-items: center;
 
   background: linear-gradient(to left, #efefbb, #d4d3dd);
+
+  @media (max-width: 400px) {
+    background: none;
+  }
 }
 
 

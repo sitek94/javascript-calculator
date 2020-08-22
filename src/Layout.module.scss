@@ -11,6 +11,11 @@
   color: #333;
   background-color: #fafafa;
   box-shadow: 15px 15px 40px -8px rgba(0,0,0,0.75);
+
+  @media (max-width: 400px) {
+    width: 100%;
+    height: 100%;
+  }
   
 }
 .top {
@@ -26,6 +31,13 @@
   position: relative;
   padding: 20px 0;
   z-index: 100;
+
+  @media (max-width: 400px) {
+    padding: 0;
+    background: rgb(88,91,110);
+    background: linear-gradient(175deg, rgba(88,91,110,0.9251050762101716) 0%, rgba(21,21,23,1) 100%);
+  }
+  
 
   // Middle panel effect
   &::after {
@@ -49,6 +61,10 @@
     opacity: .95;
 
     box-shadow: 15px 15px 40px -8px rgba(0,0,0,0.75);
+
+    @media (max-width: 400px) {
+      display: none;
+    }
   }
 }
 
