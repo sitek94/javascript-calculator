@@ -13,7 +13,7 @@ function Calculator() {
   const [currentValue, setCurrentValue] = useState('0');
   const [memoryValue, setMemoryValue] = useState(null);
   const [lastClicked, setLastClicked] = useState(null);
-  const [activeOperator, setActiveOperator] = useState(null);
+  const [lastOperatorUsed, setLastOperatorUsed] = useState(null);
   const [history, setHistory] = useState([]);
   const [isDisabled, setIsDisabled] = useState(false);
 
@@ -22,38 +22,38 @@ function Calculator() {
     if (isDisabled) return;
     if (currentValueReachedLimit()) return;
 
-    const numberClicked = e.target.value;
-
+    const digitClicked = e.target.value;
+    
     // Prevent multiple zeros
-    if (numberClicked === '00' && currentValue === '0') return;
+    if (digitClicked === '00' && currentValue === '0') return;
 
     // If clicked on decimal and there is already decimal point
-    if (numberClicked === '.' && currentValue.includes('.')) return;
+    if (digitClicked === '.' && currentValue.includes('.')) return;
 
     // Clicked on digit right after clicking on equals
-    if (activeOperator === '=') {
-      setCurrentValue(numberClicked);
+    if (lastOperatorUsed === '=') {
+      setCurrentValue(digitClicked);
       setMemoryValue(null);
-      setActiveOperator(null);
+      setLastOperatorUsed(null);
       setHistory([]);
 
       // When current value is zero or is empty (after clearing negative operator)
     } else if (currentValue === '0' || currentValue === '') {
-      setCurrentValue(numberClicked);
+      setCurrentValue(digitClicked);
 
       // When previously clicked on digit or current value is negative sign
     } else if (lastClicked === DIGIT || currentValue === '-') {
       // Append clicked number to the end
-      setCurrentValue(currentValue + numberClicked);
+      setCurrentValue(currentValue + digitClicked);
 
       // When last time clicked on operator
     } else if (lastClicked === OPERATOR) {
 
       // If clicked on decimal after clicking on operator
-      if (numberClicked === '.' && lastClicked === OPERATOR) {
-        setCurrentValue('0' + numberClicked);
+      if (digitClicked === '.' && lastClicked === OPERATOR) {
+        setCurrentValue('0' + digitClicked);
       } else {
-        setCurrentValue(numberClicked);
+        setCurrentValue(digitClicked);
       }
 
       // Store current value in memory and set current value to clicked digit
@@ -71,13 +71,13 @@ function Calculator() {
     const operatorClicked = e.target.value;
 
     // Clicked the same operator twice, do nothing
-    if (lastClicked === OPERATOR && activeOperator === operatorClicked) return;
+    if (lastClicked === OPERATOR && lastOperatorUsed === operatorClicked) return;
 
     // Clicked on square root right after clicking on equals
-    if (operatorClicked === '√' && activeOperator === '=') {
+    if (operatorClicked === '√' && lastOperatorUsed === '=') {
       setHistory(['√' + currentValue]);
       setCurrentValue(Math.sqrt(currentValue).toString());
-      setActiveOperator('√');
+      setLastOperatorUsed('√');
     }
     // Clicked square root and nothing is in memory
     else if (operatorClicked === '√' && memoryValue === null) {
@@ -86,7 +86,7 @@ function Calculator() {
       setHistory(history.concat('√' + currentValue));
 
       setLastClicked(OPERATOR);
-      setActiveOperator('√');
+      setLastOperatorUsed('√');
       return;
 
       // Clicked on square root and something is in memory
@@ -96,20 +96,20 @@ function Calculator() {
       );
       setHistory(history.concat('√' + currentValue));
       setMemoryValue(null);
-      setActiveOperator('√');
+      setLastOperatorUsed('√');
 
       // Last clicked was square root
-    } else if (activeOperator === '√') {
+    } else if (lastOperatorUsed === '√') {
       // Append new operator to history
       setHistory(history.concat(operatorClicked));
-      setActiveOperator(operatorClicked);
+      setLastOperatorUsed(operatorClicked);
       setMemoryValue(currentValue);
     }
     // Right after clicking on equals clicked on operator
-    else if (activeOperator === '=') {
+    else if (lastOperatorUsed === '=') {
       setMemoryValue(currentValue);
       setHistory([currentValue, operatorClicked]);
-      setActiveOperator(operatorClicked);
+      setLastOperatorUsed(operatorClicked);
 
       // When repeatedly clicking on operators
     } else if (lastClicked === OPERATOR) {
@@ -125,7 +125,7 @@ function Calculator() {
           setCurrentValue('');
         }
         // Update operator clicked
-        setActiveOperator(operatorClicked);
+        setLastOperatorUsed(operatorClicked);
         // Update history
         setHistory(history.slice(0, -1).concat(operatorClicked));
       }
@@ -134,7 +134,7 @@ function Calculator() {
     } else if (lastClicked === DIGIT) {
       updateResult();
       setHistory(history.concat([currentValue, operatorClicked]));
-      setActiveOperator(operatorClicked);
+      setLastOperatorUsed(operatorClicked);
     }
 
     setLastClicked(OPERATOR);
@@ -145,11 +145,11 @@ function Calculator() {
     if (isDisabled) return;
 
     // If last clicked on equals or there is nothing to calculate
-    if (activeOperator === '=' || activeOperator === null) return;
+    if (lastOperatorUsed === '=' || lastOperatorUsed === null) return;
 
     // Last clicked on square root, already has the result
-    if (activeOperator === '√') {
-      setActiveOperator(history.concat(['=', currentValue]));
+    if (lastOperatorUsed === '√') {
+      setLastOperatorUsed(history.concat(['=', currentValue]));
 
       // Update current value and history
     } else {
@@ -158,13 +158,13 @@ function Calculator() {
         history.concat([
           currentValue,
           '=',
-          calculate(memoryValue, currentValue, activeOperator),
+          calculate(memoryValue, currentValue, lastOperatorUsed),
         ])
       );
     }
 
     setLastClicked(OPERATOR);
-    setActiveOperator('=');
+    setLastOperatorUsed('=');
   };
 
   // CLEAR
@@ -175,7 +175,7 @@ function Calculator() {
     setMemoryValue(null);
     setHistory([]);
     setLastClicked(null);
-    setActiveOperator(null);
+    setLastOperatorUsed(null);
   };
 
   // DELETE
@@ -184,7 +184,7 @@ function Calculator() {
     if (lastClicked === OPERATOR) return;
 
     // Last clicked on equals
-    if (activeOperator === '=') {
+    if (lastOperatorUsed === '=') {
       setMemoryValue(null);
       setHistory([]);
 
@@ -212,7 +212,7 @@ function Calculator() {
     // There is something in memory
     if (memoryValue) {
       // Calculate the result and clear memory
-      setCurrentValue(calculate(memoryValue, currentValue, activeOperator));
+      setCurrentValue(calculate(memoryValue, currentValue, lastOperatorUsed));
       setMemoryValue(null);
     } else {
       // There is nothing in memory so update memory
