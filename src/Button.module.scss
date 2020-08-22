@@ -8,11 +8,16 @@
 }
 
 .Grid {
-  color: #fff;
+  color: #fafafa;
   background-color: transparent;
 
   &:hover {
-    background-color: #222;
+    background-color: #151517;
+    opacity: .4;
+  }
+
+  &:active {
+    opacity: .3;
   }
 }
 
@@ -23,17 +28,17 @@
   font-size: 5rem;
   font-weight: 100;
 
-  color: #fff;
+  color: #fafafa;
   background: rgb(255, 180, 95);
   background: linear-gradient(
-    176deg,
+    to right,
     rgba(255, 180, 95, 1) 0%,
     rgba(255, 41, 41, 1) 100%
   );
 
   &:hover {
     background: linear-gradient(
-      176deg,
+      to right,
       rgba(255, 180, 95, 0.9) 0%,
       rgba(255, 41, 41, 0.9) 100%
     );
@@ -41,7 +46,7 @@
 
   &:active {
     background: linear-gradient(
-      176deg,
+      to right,
       rgba(255, 180, 95, 0.75) 0%,
       rgba(255, 41, 41, 0.75) 100%
     );

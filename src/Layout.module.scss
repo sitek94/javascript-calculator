@@ -9,8 +9,8 @@
   grid-template-rows: minmax(135px, 200px) 370px 64px;
 
   color: #333;
-  background-color: #fff;
-
+  background-color: #fafafa;
+  box-shadow: 15px 15px 40px -8px rgba(0,0,0,0.75);
   
 }
 .top {
@@ -20,9 +20,6 @@
   
 }
 .middle {
-  background-color: #333;
-  opacity: .8;
-
   display: grid;
   grid-template-rows: repeat(5, 1fr);
   grid-template-columns: repeat(4, 1fr);
@@ -30,6 +27,7 @@
   padding: 20px 0;
   z-index: 100;
 
+  // Middle panel effect
   &::after {
     content: " ";
     width: 100%;
@@ -39,13 +37,20 @@
     position: absolute;
     top: 0;
     left: 0;
-    background-color: #333;
-    opacity: .5;
     z-index: -1;
+
+    // Slightly different (lighter) colors
+    // background: rgb(88,91,110);
+    // background: linear-gradient(175deg, rgba(88,91,110,0.9251050762101716) 0%, rgba(37,39,45,1) 100%);
+    
+    // Background color and opacity
+    background: rgb(88,91,110);
+    background: linear-gradient(175deg, rgba(88,91,110,0.9251050762101716) 0%, rgba(21,21,23,1) 100%);
+    opacity: .95;
+
+    box-shadow: 15px 15px 40px -8px rgba(0,0,0,0.75);
   }
 }
-
-
 
 .bottom {
   display: flex;

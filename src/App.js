@@ -26,12 +26,17 @@ function Calculator() {
     // Prevent multiple zeros
     if (digitClicked === '00' && currentValue === '0') return;
 
+    // Append zero before decimal point
+    if (digitClicked === '.' && currentValue === '0') {
+      setCurrentValue('0.');
+    }
+
     // If clicked on decimal and there is already decimal point
     if (digitClicked === '.' && currentValue.includes('.')) return;
 
     // Clicked on digit right after clicking on equals
     if (lastOperatorUsed === '=') {
-      setCurrentValue(digitClicked);
+      setCurrentValue(digitClicked === '.' ? '0.' : digitClicked);
       setMemoryValue(null);
       setLastOperatorUsed(null);
       setHistory([]);
@@ -49,7 +54,7 @@ function Calculator() {
     } else if (lastClicked === OPERATOR) {
 
       // If clicked on decimal after clicking on operator
-      if (digitClicked === '.' && lastClicked === OPERATOR) {
+      if (digitClicked === '.') {
         setCurrentValue('0' + digitClicked);
       } else {
         setCurrentValue(digitClicked);
