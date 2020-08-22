@@ -1,7 +1,19 @@
 .Layout {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: linear-gradient(to left, #efefbb, #d4d3dd);
+
+  @media (max-width: 400px) {
+    background: none;
+  }
+}
+
+.container {
   position: relative;
 
-  
   width: 300px;
   height: calc(135px + 370px + 64px);
 
@@ -16,7 +28,6 @@
     width: 100%;
     height: 100%;
   }
-  
 }
 .top {
   display: flex;
@@ -38,7 +49,6 @@
     background: linear-gradient(175deg, rgba(88,91,110,0.9251050762101716) 0%, rgba(21,21,23,1) 100%);
   }
   
-
   // Middle panel effect
   &::after {
     content: " ";

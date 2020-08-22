@@ -7,7 +7,7 @@ import Layout from './Layout';
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
 
-function Calculator() {
+export default function App() {
   // DIGIT, OPERATOR or null
   const [currentValue, setCurrentValue] = useState('0');
   const [memoryValue, setMemoryValue] = useState(null);
@@ -275,14 +275,6 @@ function Calculator() {
       }
       bottom={<LargeButton id="equals" value="=" onClick={handleEqualsClick} />}
     />
-  );
-}
-
-export default function App() {
-  return (
-    <div className="App">
-      <Calculator />
-    </div>
   );
 }
 

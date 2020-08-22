@@ -4,6 +4,7 @@ import classes from './Layout.module.scss';
 export default function Layout({ top, middle, bottom }) {
   return (
     <div className={classes.Layout}>
+    <div className={classes.container}>
       <div className={classes.top}>
         {top}
       </div>
@@ -13,6 +14,7 @@ export default function Layout({ top, middle, bottom }) {
       <div className={classes.bottom}>
         {bottom}
       </div>
+    </div>
     </div>
   )
 }
