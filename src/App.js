@@ -23,7 +23,7 @@ function Calculator() {
     if (currentValueReachedLimit()) return;
 
     const digitClicked = e.target.value;
-    
+
     // Prevent multiple zeros
     if (digitClicked === '00' && currentValue === '0') return;
 
@@ -283,8 +283,6 @@ export default function App() {
 }
 
 function calculate(a, b, operation) {
-  console.log(a, b, operation);
-
   a = parseFloat(a);
   b = parseFloat(b);
 
@@ -301,9 +299,6 @@ function calculate(a, b, operation) {
       break;
     case '/':
       result = a / b;
-      break;
-    case SQRT:
-      console.log(a, b);
       break;
     default:
       break;
