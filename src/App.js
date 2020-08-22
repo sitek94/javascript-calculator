@@ -6,7 +6,6 @@ import Layout from './Layout';
 
 const DIGIT = 'DIGIT';
 const OPERATOR = 'OPERATOR';
-const SQRT = '√';
 
 function Calculator() {
   // DIGIT, OPERATOR or null

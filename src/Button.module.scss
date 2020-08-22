@@ -8,8 +8,11 @@
 }
 
 .Grid {
+  color: #fff;
+  background-color: transparent;
+
   &:hover {
-    background-color: #ccc;
+    background-color: #222;
   }
 }
 
