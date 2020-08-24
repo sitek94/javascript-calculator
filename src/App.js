@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useState } from 'react';
 
-import Display from "./Display";
-import { GridButton, LargeButton } from "./Button";
-import Layout from "./Layout";
+import Display from './Display';
+import { GridButton, LargeButton } from './Button';
+import Layout from './Layout';
 
-const DIGIT = "DIGIT";
-const OPERATOR = "OPERATOR";
+const DIGIT = 'DIGIT';
+const OPERATOR = 'OPERATOR';
 
 export default function App() {
-  const [currentValue, setCurrentValue] = useState("0");
+  const [currentValue, setCurrentValue] = useState('0');
   const [memoryValue, setMemoryValue] = useState(null);
   const [lastClicked, setLastClicked] = useState(null);
   const [lastOperatorUsed, setLastOperatorUsed] = useState(null);
@@ -16,50 +16,48 @@ export default function App() {
   const [isDisabled, setIsDisabled] = useState(false);
 
   // DIGIT
-  const handleDigitClick = (e) => {
+  const handleDigit = (digit) => {
     if (isDisabled) return;
     if (currentValueReachedLimit()) return;
 
-    const digitClicked = e.target.value;
-
     // Prevent multiple zeros
-    if (digitClicked === "00" && currentValue === "0") return;
+    if (digit === '00' && (currentValue === '0' || lastClicked === OPERATOR)) return;
 
     // Append zero before decimal point
-    if (digitClicked === "." && currentValue === "0") {
-      setCurrentValue("0.");
+    if (digit === '.' && currentValue === '0') {
+      setCurrentValue('0.');
     }
 
     // If clicked on decimal and there is already decimal point
-    if (digitClicked === "." && currentValue.includes(".")) return;
+    if (digit === '.' && currentValue.includes('.')) return;
 
     // Clicked on digit right after clicking on equals
-    if (lastOperatorUsed === "=") {
-      setCurrentValue(digitClicked === "." ? "0." : digitClicked);
+    if (lastOperatorUsed === '=') {
+      setCurrentValue(digit === '.' ? '0.' : digit);
       setMemoryValue(null);
       setLastOperatorUsed(null);
       setHistory([]);
 
       // When current value is zero or is empty (after clearing negative operator)
-    } else if (currentValue === "0" || currentValue === "") {
-      setCurrentValue(digitClicked);
+    } else if (currentValue === '0' || currentValue === '') {
+      setCurrentValue(digit);
 
       // When previously clicked on digit or current value is negative sign
-    } else if (lastClicked === DIGIT || currentValue === "-") {
+    } else if (lastClicked === DIGIT || currentValue === '-') {
       // Append clicked number to the end
-      setCurrentValue(currentValue + digitClicked);
+      setCurrentValue(currentValue + digit);
 
       // When last time clicked on operator
     } else if (lastClicked === OPERATOR) {
       // If clicked on decimal after clicking on operator
-      if (digitClicked === ".") {
-        setCurrentValue("0" + digitClicked);
+      if (digit === '.') {
+        setCurrentValue('0' + digit);
       } else {
-        setCurrentValue(digitClicked);
+        setCurrentValue(digit);
       }
 
       // Store current value in memory and set current value to clicked digit
-      if (lastOperatorUsed !== "√") {
+      if (lastOperatorUsed !== '√') {
         setMemoryValue(currentValue);
       }
     }
@@ -68,119 +66,134 @@ export default function App() {
   };
 
   // OPERATOR
-  const handleOperatorClick = (e) => {
+  const handleOperator = (operator) => {
     if (isDisabled) return;
-    if (currentValue.slice(-1) === ".") return;
-
-    const operatorClicked = e.target.value;
+    if (currentValue.slice(-1) === '.') return;
 
     // Clicked the same operator twice, do nothing
-    if (lastClicked === OPERATOR && lastOperatorUsed === operatorClicked)
-      return;
+    if (lastClicked === OPERATOR && lastOperatorUsed === operator) return;
 
     // Clicked on square root right after clicking on equals
-    if (operatorClicked === "√" && lastOperatorUsed === "=") {
-      setHistory(["√" + currentValue]);
+    if (operator === '√' && lastOperatorUsed === '=') {
+      setHistory(['√' + currentValue]);
       setCurrentValue(Math.sqrt(currentValue).toString());
-      setLastOperatorUsed("√");
+      setLastOperatorUsed('√');
     }
     // Clicked square root and nothing is in memory
-    else if (operatorClicked === "√" && memoryValue === null) {
+    else if (operator === '√' && memoryValue === null) {
       // Calculate the value and append to history
       setCurrentValue(Math.sqrt(currentValue).toString());
       // setHistory(history.concat("√" + currentValue));
-      setHistory(["√" + currentValue]);
+      setHistory(['√' + currentValue]);
 
       setLastClicked(OPERATOR);
-      setLastOperatorUsed("√");
+      setLastOperatorUsed('√');
       return;
 
       // Clicked on square root and something is in memory
-    } else if (operatorClicked === "√" && memoryValue) {
+    } else if (operator === '√' && memoryValue) {
       setCurrentValue(
         (Math.sqrt(currentValue) + parseFloat(memoryValue)).toString()
       );
-      setHistory(history.concat("√" + currentValue));
+      setHistory(history.concat('√' + currentValue));
       setMemoryValue(null);
-      setLastOperatorUsed("√");
+      setLastOperatorUsed('√');
 
       // Last clicked was square root
-    } else if (lastOperatorUsed === "√") {
+    } else if (lastOperatorUsed === '√') {
       // Append new operator to history
-      setHistory(history.concat(operatorClicked));
-      setLastOperatorUsed(operatorClicked);
+      setHistory(history.concat(operator));
+      setLastOperatorUsed(operator);
       setMemoryValue(currentValue);
     }
     // Right after clicking on equals clicked on operator
-    else if (lastOperatorUsed === "=") {
+    else if (lastOperatorUsed === '=') {
       setMemoryValue(currentValue);
-      setHistory([currentValue, operatorClicked]);
-      setLastOperatorUsed(operatorClicked);
+      setHistory([currentValue, operator]);
+      setLastOperatorUsed(operator);
 
       // When repeatedly clicking on operators
     } else if (lastClicked === OPERATOR) {
       // Last time clicked on operator and then on subtract
-      if (operatorClicked === "-") {
+      if (operator === '-') {
         // Set current to negative value
-        setCurrentValue("-");
+        setCurrentValue('-');
       } else {
         // Last time changed the value to negative and clicked operator
         // again, so the user wants to change the operation
-        if (currentValue === "-") {
+        if (currentValue === '-') {
           // Remove negative sign from current value
-          setCurrentValue("");
+          setCurrentValue('');
         }
         // Update operator clicked
-        setLastOperatorUsed(operatorClicked);
+        setLastOperatorUsed(operator);
         // Update history
-        setHistory(history.slice(0, -1).concat(operatorClicked));
+        setHistory(history.slice(0, -1).concat(operator));
       }
 
       // Last time clicked on a digit
     } else if (lastClicked === DIGIT) {
       updateResult();
-      setHistory(history.concat([currentValue, operatorClicked]));
-      setLastOperatorUsed(operatorClicked);
+      setHistory(history.concat([currentValue, operator]));
+      setLastOperatorUsed(operator);
     }
 
     setLastClicked(OPERATOR);
   };
 
   // EQUALS
-  const handleEqualsClick = () => {
+  const handleEquals = () => {
     if (isDisabled) return;
 
     // If last clicked on equals or there is nothing to calculate
-    if (lastOperatorUsed === "=" || lastOperatorUsed === null) return;
+    if (lastOperatorUsed === '=' || lastOperatorUsed === null) return;
+
+    // User is trying to divide by zero
+    if (lastOperatorUsed === '/' && currentValue === '0') {
+      setTimeout(() => {
+        setCurrentValue('0');
+        setIsDisabled(false);
+      }, 1000)
+      setCurrentValue('You cannot divide by zero');
+      setMemoryValue(null);
+      setHistory([]);
+      setIsDisabled(true);
+      setLastClicked(null);
+      setLastOperatorUsed(null);
+      return;
+    };
 
     // Last clicked on square root, already has the result
-    if (lastOperatorUsed === "√") {
-      setLastOperatorUsed(history.concat(["=", currentValue]));
+    if (lastOperatorUsed === '√') {
+      setLastOperatorUsed(history.concat(['=', currentValue]));
 
       // Clicked on equals right after clicking on operator
     } else if (lastClicked === OPERATOR && !memoryValue) {
-      setHistory(history.slice(0, -1).concat(["=", currentValue]));
+      setHistory(history.slice(0, -1).concat(['=', currentValue]));
+
     } else {
+      
       // Update current value and history
       updateResult();
       setHistory(
         history.concat([
           currentValue,
-          "=",
-          calculate(memoryValue, currentValue, lastOperatorUsed)
+          '=',
+          calculate(memoryValue, currentValue, lastOperatorUsed),
         ])
       );
     }
 
     setLastClicked(OPERATOR);
-    setLastOperatorUsed("=");
+    setLastOperatorUsed('=');
   };
 
   // CLEAR
   const handleClear = () => {
     if (isDisabled) return;
+    console.log("WHY");
 
-    setCurrentValue("0");
+    setCurrentValue('0');
     setMemoryValue(null);
     setHistory([]);
     setLastClicked(null);
@@ -188,18 +201,18 @@ export default function App() {
   };
 
   // DELETE
-  const handleDeleteClick = () => {
+  const handleDelete = () => {
     if (isDisabled) return;
     if (lastClicked === OPERATOR) return;
 
     // Last clicked on equals
-    if (lastOperatorUsed === "=") {
+    if (lastOperatorUsed === '=') {
       setMemoryValue(null);
       setHistory([]);
 
       // Current value is just one digit
     } else if (currentValue.length === 1) {
-      setCurrentValue("0");
+      setCurrentValue('0');
     } else {
       // Remove last digit
       setCurrentValue(currentValue.slice(0, -1));
@@ -207,12 +220,12 @@ export default function App() {
   };
 
   // PLUS/MINUS
-  const handlePlusMinusClick = () => {
+  const handlePlusMinus = () => {
     if (isDisabled) return;
 
     // Append/remove minus sign
     setCurrentValue(
-      currentValue[0] === "-" ? currentValue.slice(1) : "-" + currentValue
+      currentValue[0] === '-' ? currentValue.slice(1) : '-' + currentValue
     );
   };
 
@@ -237,7 +250,7 @@ export default function App() {
         setIsDisabled(false);
       }, 1000);
 
-      setCurrentValue("LIMIT REACHED");
+      setCurrentValue('LIMIT REACHED');
       setIsDisabled(true);
       return true;
     }
@@ -245,40 +258,76 @@ export default function App() {
 
   return (
     <Layout
-      top={<Display topValue={history.join(" ")} bottomValue={currentValue} />}
+      top={<Display topValue={history.join(' ')} bottomValue={currentValue} />}
       middle={
         <>
-          <GridButton id="clear" value="AC" onClick={handleClear} />
-          <GridButton value="DEL" onClick={handleDeleteClick} />
+          <GridButton id="clear" keyCodes={[46]} value="AC" onClick={handleClear} />
+          <GridButton keyCodes={[8]} value="DEL" onClick={handleDelete} />
+          <GridButton id="plus-minus" value="+/-" onClick={handlePlusMinus} />
           <GridButton
-            id="plus-minus"
-            value="+/-"
-            onClick={handlePlusMinusClick}
+            id="sqrt"
+            value="&radic;"
+            onClick={handleOperator}
           />
-          <GridButton id="sqrt" value="&radic;" onClick={handleOperatorClick} />
 
-          <GridButton id="seven" value="7" onClick={handleDigitClick} />
-          <GridButton id="eight" value="8" onClick={handleDigitClick} />
-          <GridButton id="nine" value="9" onClick={handleDigitClick} />
-          <GridButton id="divide" value="/" onClick={handleOperatorClick} />
+          <GridButton id="seven" keyCodes={[55,103]} value="7" onClick={handleDigit} />
+          <GridButton id="eight" keyCodes={[56,104]} value="8" onClick={handleDigit} />
+          <GridButton id="nine" keyCodes={[57,105]} value="9" onClick={handleDigit} />
+          <GridButton
+            id="divide"
+            keyCodes={[111,191]}
+            value="/"
+            onClick={handleOperator}
+          />
 
-          <GridButton id="four" value="4" onClick={handleDigitClick} />
-          <GridButton id="five" value="5" onClick={handleDigitClick} />
-          <GridButton id="six" value="6" onClick={handleDigitClick} />
-          <GridButton id="multiply" value="x" onClick={handleOperatorClick} />
+          <GridButton id="four" keyCodes={[52,100]} value="4" onClick={handleDigit} />
+          <GridButton id="five" keyCodes={[53,101]} value="5" onClick={handleDigit} />
+          <GridButton id="six" keyCodes={[54,102]} value="6" onClick={handleDigit} />
+          <GridButton
+            id="multiply"
+            keyCodes={[106, 56]}
+            value="x"
+            onClick={handleOperator}
+          />
 
-          <GridButton id="one" value="1" onClick={handleDigitClick} />
-          <GridButton id="two" value="2" onClick={handleDigitClick} />
-          <GridButton id="three" value="3" onClick={handleDigitClick} />
-          <GridButton id="subtract" value="-" onClick={handleOperatorClick} />
+          <GridButton id="one" keyCodes={[49,97]} value="1" onClick={handleDigit} />
+          <GridButton id="two" keyCodes={[50,98]} value="2" onClick={handleDigit} />
+          <GridButton id="three" keyCodes={[51,99]} value="3" onClick={handleDigit} />
+          <GridButton
+            id="subtract"
+            keyCodes={[189,109]}
+            value="-"
+            onClick={handleOperator}
+          />
 
-          <GridButton id="zero" value="0" onClick={handleDigitClick} />
-          <GridButton id="double-zero" value="00" onClick={handleDigitClick} />
-          <GridButton id="decimal" value="." onClick={handleDigitClick} />
-          <GridButton id="add" value="+" onClick={handleOperatorClick} />
+          <GridButton id="zero" keyCodes={[48,96]} value="0" onClick={handleDigit} />
+          <GridButton
+            id="double-zero"
+            value="00"
+            onClick={handleDigit}
+          />
+          <GridButton
+            id="decimal"
+            keyCodes={[190,110]}
+            value="."
+            onClick={handleDigit}
+          />
+          <GridButton
+            id="add"
+            keyCodes={[107]}
+            value="+"
+            onClick={handleOperator}
+          />
         </>
       }
-      bottom={<LargeButton id="equals" value="=" onClick={handleEqualsClick} />}
+      bottom={
+        <LargeButton
+          id="equals"
+          keyCodes={[13]}
+          value="="
+          onClick={handleEquals}
+        />
+      }
     />
   );
 }
@@ -289,16 +338,16 @@ function calculate(a, b, operation) {
 
   let result;
   switch (operation) {
-    case "+":
+    case '+':
       result = a + b;
       break;
-    case "-":
+    case '-':
       result = a - b;
       break;
-    case "x":
+    case 'x':
       result = a * b;
       break;
-    case "/":
+    case '/':
       result = a / b;
       break;
     default:
