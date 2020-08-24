@@ -1,21 +1,21 @@
 import React, { useEffect } from 'react';
 import classes from './Button.module.scss';
 
-
 function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
 
-  const handleClick = (e) => {
+  // Click
+  const handleClick = () => {
     onClick(value)
   }
 
+  // Key down
   const handleKeyDown = (e) => {
     if (keyCodes.includes(e.keyCode)) {
-      console.log(e);
       onClick(value);
-      console.log(value);
     }
   }
 
+  // Add/remove event listeners
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
 
@@ -23,8 +23,6 @@ function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
       window.removeEventListener('keydown', handleKeyDown);
     }
   })
-
-
 
   return (
     <input
