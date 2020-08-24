@@ -158,6 +158,8 @@ export default function App() {
       setMemoryValue(null);
       setHistory([]);
       setIsDisabled(true);
+      setLastClicked(null);
+      setLastOperatorUsed(null);
       return;
     };
 
@@ -189,6 +191,7 @@ export default function App() {
   // CLEAR
   const handleClear = () => {
     if (isDisabled) return;
+    console.log("WHY");
 
     setCurrentValue('0');
     setMemoryValue(null);
@@ -282,7 +285,7 @@ export default function App() {
           <GridButton id="six" keyCodes={[54,102]} value="6" onClick={handleDigit} />
           <GridButton
             id="multiply"
-            keyCodes={[106]}
+            keyCodes={[106, 56]}
             value="x"
             onClick={handleOperator}
           />
@@ -320,7 +323,7 @@ export default function App() {
       bottom={
         <LargeButton
           id="equals"
-          keyCodes={[187,13]}
+          keyCodes={[13]}
           value="="
           onClick={handleEquals}
         />

@@ -14,16 +14,16 @@ function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
 
   // Key down
   const handleKeyDown = (e) => {
-    if (keyCodes.includes(e.keyCode)) {
+    if (keyCodes.includes(e.keyCode) || e.key === value) {
+      console.log(e, e.key, value, keyCodes.includes(e.keyCode));
       onClick(value);
 
       // Imitate hover and active state when pressing button
       setTimeout(() => {
-        inputEl.current.style.backgroundColor = 'transparent';
-        inputEl.current.style.opacity = 1;
+        console.log(inputEl);
+        inputEl.current.classList.toggle(classes.keydown);
       }, 100)
-      inputEl.current.style.backgroundColor = '#151517';
-      inputEl.current.style.opacity = .3;
+      inputEl.current.classList.toggle(classes.keydown);
     }
   }
 
