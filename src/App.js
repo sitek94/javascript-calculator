@@ -21,7 +21,7 @@ export default function App() {
     if (currentValueReachedLimit()) return;
 
     // Prevent multiple zeros
-    if (digit === '00' && currentValue === '0') return;
+    if (digit === '00' && (currentValue === '0' || lastClicked === OPERATOR)) return;
 
     // Append zero before decimal point
     if (digit === '.' && currentValue === '0') {
@@ -148,6 +148,19 @@ export default function App() {
     // If last clicked on equals or there is nothing to calculate
     if (lastOperatorUsed === '=' || lastOperatorUsed === null) return;
 
+    // User is trying to divide by zero
+    if (lastOperatorUsed === '/' && currentValue === '0') {
+      setTimeout(() => {
+        setCurrentValue('0');
+        setIsDisabled(false);
+      }, 1000)
+      setCurrentValue('You cannot divide by zero');
+      setMemoryValue(null);
+      setHistory([]);
+      setIsDisabled(true);
+      return;
+    };
+
     // Last clicked on square root, already has the result
     if (lastOperatorUsed === '√') {
       setLastOperatorUsed(history.concat(['=', currentValue]));
@@ -155,7 +168,9 @@ export default function App() {
       // Clicked on equals right after clicking on operator
     } else if (lastClicked === OPERATOR && !memoryValue) {
       setHistory(history.slice(0, -1).concat(['=', currentValue]));
+
     } else {
+      
       // Update current value and history
       updateResult();
       setHistory(
