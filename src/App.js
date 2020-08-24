@@ -17,7 +17,6 @@ export default function App() {
 
   // DIGIT
   const handleDigit = (digit) => {
-    console.log(digit);
     if (isDisabled) return;
     if (currentValueReachedLimit()) return;
 
