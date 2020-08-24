@@ -1,7 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useRef } from 'react';
 import classes from './Button.module.scss';
 
+
+
 function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
+
+  const inputEl = useRef();
 
   // Click
   const handleClick = () => {
@@ -12,6 +16,14 @@ function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
   const handleKeyDown = (e) => {
     if (keyCodes.includes(e.keyCode)) {
       onClick(value);
+
+      // Imitate hover and active state when pressing button
+      setTimeout(() => {
+        inputEl.current.style.backgroundColor = 'transparent';
+        inputEl.current.style.opacity = 1;
+      }, 100)
+      inputEl.current.style.backgroundColor = '#151517';
+      inputEl.current.style.opacity = .3;
     }
   }
 
@@ -26,6 +38,7 @@ function ButtonBase({ className, keyCodes, value, onClick, ...props}) {
 
   return (
     <input
+      ref={inputEl}
       type="button"
       value={value}
       className={[classes.Base, className].join(' ')}
