@@ -2,7 +2,7 @@
 
 See the project live: https://sitek94.github.io/javascript-calculator/
 
-JavaScript calculator that uses immediate excecution logic for input logic.
+JavaScript calculator that uses immediate execution for input logic.
 The app is built as to fulfill `user stories` from **freeCodeCamp**, you can see them here [Build a JavaScript Calculator](https://www.freecodecamp.org/learn/front-end-libraries/front-end-libraries-projects/build-a-javascript-calculator)
 Some additional functionality:
 * square root
