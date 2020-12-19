@@ -2,7 +2,8 @@
 
 See the project live: https://sitek94.github.io/javascript-calculator/
 
-JavaScript calculator that uses immediate execution for input logic.
+JavaScript calculator that uses immediate execution for input logic. Additionally I practiced recreating a really cool design from dribbble.
+
 The app is built as to fulfill `user stories` from **freeCodeCamp**, you can see them here [link to user stories](https://www.freecodecamp.org/learn/front-end-libraries/front-end-libraries-projects/build-a-javascript-calculator).
 
 Some additional functionality:
